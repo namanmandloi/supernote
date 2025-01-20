@@ -15,7 +15,7 @@ load_dotenv()
 
 #Get the OpenAI Model parameters
 #Set the OpenAI API key from Streamlit Secrets Key
-#openai.api_key = st.secrets["OPENAI_API_KEY"]
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 client = openai.OpenAI()
 model = utils.get_openai_model() #Get the OpenAI model (e.g: GPT 4o mini)
 
