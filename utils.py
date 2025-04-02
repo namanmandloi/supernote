@@ -63,12 +63,12 @@ def updated_assistant_instruction(client, assistant_id, assiatant_instruction):
 # Input: Open AI Client, Vector Store Name
 # Output: Vector Store
 def check_and_get_vector_store(client, vs_name):
-    vs_list = client.beta.vector_stores.list()
+    vs_list = client.vector_stores.list()
     for vs in vs_list:
         if vs.name == vs_name:
             return vs
     # # Vector Store does not exist. Create one. 
-    vs = client.beta.vector_stores.create(vs_name)
+    vs = client.vector_stores.create(vs_name)
     return vs
 
 # # Function to check if a file exists in the vector store.
@@ -76,7 +76,7 @@ def check_and_get_vector_store(client, vs_name):
 # Output: File object in vector store (if file exists); False if file does not exist in vectore store
 def file_exists_in_vector_store(client, vector_store_id, filename):
     # List all files in the vector store
-    response = client.beta.vector_stores.files.list(vector_store_id=vector_store_id)
+    response = client.vector_stores.files.list(vector_store_id=vector_store_id)
     files = response.data
     
     # Check if any file has the same name as the target filename
@@ -103,7 +103,7 @@ def upload_file_to_vector_store(client, vector_store_id, filename):
         file_streams = [open(path, "rb") for path in file_paths]
         # # Use the upload and poll SDK helper to upload the files, add them to the vector store,
         # # and poll the status of the file batch for completion.
-        file_batch = client.beta.vector_stores.file_batches.upload_and_poll(
+        file_batch = client.vector_stores.file_batches.upload_and_poll(
             vector_store_id=vector_store_id, files=file_streams
         )
         #Get the File that was uploaded. 
@@ -111,9 +111,11 @@ def upload_file_to_vector_store(client, vector_store_id, filename):
     #Return the File ID of the file that was uploaded to the Vectore Store. 
     return file_object
 
-# # Update the assistant to use the updated Vector Store
+# Function: Update_assistant_vector_store
+# This function will ensure the OpenAI assistant uses the updated Vector Store
+# The Vector store contains the uploaded notes of various students.  
 # Input: Open AI Client, Assistant_ID, Vector_Store_ID
-# Output: Assistant
+# Output: Open AI Assistant object
 def update_assistant_vector_store(client, assistant_id, vs_id):
     assistant = client.beta.assistants.update(
         assistant_id=assistant_id,
